@@ -40,9 +40,11 @@ drwxr-x--- 4 boot2root boot2root 4096 Nov  8 09:12 zaz
   ----------------------------------------------------------------------------------------
 
 On peut voir un repo nommé "LOOKATME", ce dernier contient un fichier "password" :
+  ----------------------------------------------------------------------------------------
+root@debian:/home/boot2root/home/LOOKATME# cat password
+lmezard:G!@M6f4Eatau{sF"
+  ----------------------------------------------------------------------------------------
 
-  ```root@debian:/home/boot2root/home/LOOKATME# cat password
-  lmezard:G!@M6f4Eatau{sF"```
   
 On a donc ici un point d'entrée dans l'OS.
 
