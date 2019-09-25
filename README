@@ -87,11 +87,17 @@ On lance donc notre script pcap.py qui va reconstituer le code complet:
 
   ----------------------------------------------------------------------------------------
 
-
+lmezard@BornToSecHackMe:~$ python pcap.py
+All files are sorted !
+Code recovered !
+'main.c' file was created !
+MY PASSWORD IS: Iheartpwnage
+Now SHA-256 it and submit
 
   ----------------------------------------------------------------------------------------
 
-  
+Donc aprés avoir haché "Iheartpwnage" en SHA-256 on obtient le password : "330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4"
+
   
 
 
