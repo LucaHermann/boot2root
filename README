@@ -1,13 +1,100 @@
-#writeup 1
+#Writeup 1
 
 ------------------------------------------------------------------------------------------------------------------------------
 
-##Step 1
-
-----------------------------------------------------------------------------------------
-
 Sur une machine Debian(vm):
   * wget http://dl.42.fr/BornToSecHackMe-v1.1.iso
-  * mount -o loop BornToSecHackMe-v1.1.iso /mnt
+  * mount -o loop ./BornToSecHackMe-v1.1.iso /mnt/iso
+  * cd /mnt/iso
+  
+  ----------------------------------------------------------------------------------------
+  
+root@debian:/mnt/iso/casper# ls -lh
+total 407M
+-r--r--r-- 1 root root  15K Jun 17 00:36 filesystem.manifest
+-r--r--r-- 1 root root  15K Jun 17 00:36 filesystem.manifest-desktop
+-r--r--r-- 1 root root   11 Jun 17 00:39 filesystem.size
+-r--r--r-- 1 root root 386M Jun 17 00:39 filesystem.squashfs  #<----------
+-r--r--r-- 1 root root  17M Jun 17 00:36 initrd.gz
+-r--r--r-- 1 root root  201 Jun 17 00:36 README.diskdefines
+-r--r--r-- 1 root root 4.9M Jun 17 00:36 vmlinuz
+
+  ----------------------------------------------------------------------------------------
+
+En faisant quelques recherches, on s'apperçoit que toute l'arborescence de l'OS est contenue dans le fichier filesystem.squashfs.
+ * apt-get install squashfs-tools
+ * unsquashfs -f -d /home/boot2root/ /nmt/iso/capser/filesystem.suqshfs
+ 
+  ----------------------------------------------------------------------------------------
+
+root@debian:/home/boot2root/home# ls -l
+total 28
+drwxr-x--- 6 boot2root boot2root 4096 Nov  9 10:57 ft_root
+drwxr-x--- 3 boot2root boot2root 4096 Nov  9 11:10 laurie
+drwxr-x--- 4 boot2root boot2root 4096 Nov  8 09:08 laurie@borntosec.net
+drwxrwxrwx 3 boot2root boot2root 4096 Nov  8 09:11 lmezard
+drwxr-x--- 2 boot2root boot2root 4096 Nov  8 09:07 LOOKATME #<-----------
+drwxr-x--- 3 boot2root boot2root 4096 Nov  9 11:10 thor
+drwxr-x--- 4 boot2root boot2root 4096 Nov  8 09:12 zaz
+
+  ----------------------------------------------------------------------------------------
+
+On peut voir un repo nommé "LOOKATME", ce dernier contient un fichier "password" :
+
+  ```root@debian:/home/boot2root/home/LOOKATME# cat password
+  lmezard:G!@M6f4Eatau{sF"```
+  
+On a donc ici un point d'entrée dans l'OS.
+
+  ----------------------------------------------------------------------------------------
+        ____                _______    _____
+       |  _ \              |__   __|  / ____|
+       | |_) | ___  _ __ _ __ | | ___| (___   ___  ___
+       |  _ < / _ \| '__| '_ \| |/ _ \\___ \ / _ \/ __|
+       | |_) | (_) | |  | | | | | (_) |___) |  __/ (__
+       |____/ \___/|_|  |_| |_|_|\___/_____/ \___|\___|
+
+                       Good luck & Have fun
+
+lmezard@BornToSecHackMe:~$ ls -l
+total 791
+-rwxr-x--- 1 lmezard lmezard 808960 Oct  8 2015 fun
+-rwxr-x--- 1 lmezard lmezard     96 Oct  9 2015 README
+lmezard@BornToSecHackMe:~$ cat README
+Complete this little challenge and use the result as password for user 'laurie' to login in ssh
+lmezard@BornToSecHackMe:~$ file fun
+fun: POSIX tar archive (GNU)
+lmezard@BornToSecHackMe:~$ tar xvf fun ft_fun
+ft_fun/
+ft_fun/C4D03.pcap
+ft_fun/GKGEP.pcap
+ft_fun/A5GPY.pcap
+ft_fun/K8SEB.pcap
+ft_fun/PFG98.pcap
+ft_fun/U89WD.pcap
+...
+ft_fun/7ICHZ.pcap
+ft_fun/AMH11.pcap
+ft_fun/DFO1G.pcap
+ft_fun/G3VJZ.pcap
+ft_fun/Y8S1M.pcap
+
+  ----------------------------------------------------------------------------------------
+
+
+En regardant ces fichiers .pcap de plus prés, on peut s'apercevoir qu'ils contiennent des parties de codes en c.
+On lance donc notre script pcap.py qui va reconstituer le code complet:
+
+  ----------------------------------------------------------------------------------------
+
+
+
+  ----------------------------------------------------------------------------------------
+
   
   
+
+
+
+
+
