@@ -23,7 +23,7 @@ total 407M
 
 En faisant quelques recherches, on s'apperçoit que toute l'arborescence de l'OS est contenue dans le fichier filesystem.squashfs.
  * apt-get install squashfs-tools
- * unsquashfs -f -d /home/boot2root/ /nmt/iso/capser/filesystem.suqshfs
+ * unsquashfs -f -d /home/boot2root/ /mnt/iso/capser/filesystem.suqshfs
  
   ----------------------------------------------------------------------------------------
 
