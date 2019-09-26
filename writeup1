@@ -101,7 +101,141 @@ Now SHA-256 it and submit
 Donc aprés avoir haché "Iheartpwnage" en SHA-256 on obtient le password : "330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4"
 
   
+On se connecte donc en ssh avec le user "laurie"
 
+  ----------------------------------------------------------------------------------------
+laurie@BornToSecHackMe:~$ ls
+bomb  README
+laurie@BornToSecHackMe:~$ cat README
+Diffuse this bomb!
+When you have all the password use it as "thor" user with ssh.
+
+HINT:
+P
+ 2
+ b
+
+o
+4
+
+NO SPACE IN THE PASSWORD (password is case sensitive).
+  ----------------------------------------------------------------------------------------
+
+--------------------------------------BOMB CHALLENGE--------------------------------------
+
+  ----------------------------------------------------------------------------------------
+laurie@BornToSecHackMe:~$ ./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+  ----------------------------------------------------------------------------------------
+
+phase1:
+    on remarque que le main call strings_not_equal
+    avec gdb:
+    >>>
+    set step-mode on
+    b strings_not_equal
+    r
+    "salut"
+    info registers
+    p (char*)0x804b680 // "salut" > notre chaine
+    p (char*)0x80497c0 // "Public speaking is very easy." > la chaine avec laquelle il compare
+    <<<
+    done :)
+  ----------------------------------------------------------------------------------------
+laurie@BornToSecHackMe:~$ ./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+Public speaking is very easy.
+Phase 1 defused. How about the next one?
+  ----------------------------------------------------------------------------------------
+    
+phase2:
+    read_six_numbers => sscanf de (%d %d %d %d %d %d)
+    avec gdb on peut mettre des breakpoint à chaque cmp
+    1 2 6 24 120 720
+  ----------------------------------------------------------------------------------------    
+laurie@BornToSecHackMe:~$ ./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+Public speaking is very easy.
+Phase 1 defused. How about the next one?
+1 2 6 24 120 720
+That's number 2.  Keep going!
+  ----------------------------------------------------------------------------------------
+
+phase3:
+    il fait un scanf de %d %c %d
+    le readme indique que la deuxieme lettre est b (0x62 en hexa)
+    on setup un jump a 0x08048c00 (donc le premier digit est 1)
+       0x08048c02 <+106>:    cmp    DWORD PTR [ebp-0x4],0xd6
+    0xd6 = 214
+    1 b 214 :)
+   ----------------------------------------------------------------------------------------   
+laurie@BornToSecHackMe:~$ ./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+Public speaking is very easy.
+Phase 1 defused. How about the next one?
+1 2 6 24 120 720
+That's number 2.  Keep going!
+1 b 214
+Halfway there!
+  ----------------------------------------------------------------------------------------
+
+phase4:
+    fonction recursive suivie d'un cmp avec 55
+    avec quelques essais on reconnait fibonacci et on trouve 9
+  ----------------------------------------------------------------------------------------
+laurie@BornToSecHackMe:~$ ./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+BOOM!!!
+The bomb has blown up.
+laurie@BornToSecHackMe:~$ Welcome this is my little bomb !!!! You have 6 stages with
+Welcome this is my little bomb ./bomb./bomb You have 6 stages with
+Welcome: command not found
+laurie@BornToSecHackMe:~$ ./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+Public speaking is very easy.
+Phase 1 defused. How about the next one?
+1 2 6 24 120 720
+That's number 2.  Keep going!
+1 b 214
+Halfway there!
+9
+So you got that one.  Try this one.
+  ----------------------------------------------------------------------------------------
+
+
+phase5:
+    ici un strcmp avec deux chaines ("giants" et une autre)
+    l'autre chaine est cree par une substitution monoalphabetique de notre input
+    on peut betement essayer avec tout l'alphabet: on trouve opekmq (opekma marche aussi...)
+  ----------------------------------------------------------------------------------------
+laurie@BornToSecHackMe:~$ ./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+Public speaking is very easy.
+Phase 1 defused. How about the next one?
+1 2 6 24 120 720
+That's number 2.  Keep going!
+1 b 214
+Halfway there!
+9
+So you got that one.  Try this one.
+opekmq
+Good work!  On to the next...
+  ----------------------------------------------------------------------------------------
+  
+phase6:
+    read_six_numbers = on sait qu'on doit entrer 6 nombres
+    avec plusieurs essais on peut etablir quelques regles, notamment que les nombres sont tous compris entre 1 et 6
+    la j'avoue que j'ai un peu testé pas mal de combinaison et y'en a une qui a marché donc j'ai pas vraiment compris l'algo
+  ----------------------------------------------------------------------------------------
+  
+  ----------------------------------------------------------------------------------------
 
 
 
