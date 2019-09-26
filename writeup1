@@ -232,11 +232,33 @@ Good work!  On to the next...
 phase6:
     read_six_numbers = on sait qu'on doit entrer 6 nombres
     avec plusieurs essais on peut etablir quelques regles, notamment que les nombres sont tous compris entre 1 et 6
+    4 2 6 3 1 5
     la j'avoue que j'ai un peu testé pas mal de combinaison et y'en a une qui a marché donc j'ai pas vraiment compris l'algo
   ----------------------------------------------------------------------------------------
-  
+laurie@BornToSecHackMe:~$ ./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+Public speaking is very easy.
+Phase 1 defused. How about the next one?
+1 2 6 24 120 720
+That's number 2.  Keep going!
+1 b 214
+Halfway there!
+9
+So you got that one.  Try this one.
+opekmq
+Good work!  On to the next...
+4 2 6 3 1 5
+Congratulations! You've defused the bomb!
   ----------------------------------------------------------------------------------------
 
 
+Donc on peut maintenant se connecter avec le login thor : Publicspeakingisveryeasy.126241207201b2149opekmq426135
 
+  ----------------------------------------------------------------------------------------
+thor@BornToSecHackMe:~$ ls
+README  turtle
+thor@BornToSecHackMe:~$ cat README
+Finish this challenge and use the result as password for 'zaz' user.
+  ----------------------------------------------------------------------------------------
 
