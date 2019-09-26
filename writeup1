@@ -280,6 +280,6 @@ turtle                                                                          
 
 Nous avons fait un script python qui transforme le fichier "turtle" en un executable python => result.py
 En lançant ce dernier, une fenetre graphique s'ouvre et on peut voir le mot "slash" se dessiner.
-A la fin du fichier "turtle" il y a une phrase "Can you digest the message? :)" qui fait reference au hash MD-5 ;) ce aui nous donne :
+A la fin du fichier "turtle" il y a une phrase "Can you digest the message? :)" qui fait reference au hash MD-5 (message digest) ;) ce qui nous donne :
 zaz : 646da671ca01bb5d84dbb5fb2238dc8e
 
