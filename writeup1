@@ -261,4 +261,25 @@ README  turtle
 thor@BornToSecHackMe:~$ cat README
 Finish this challenge and use the result as password for 'zaz' user.
   ----------------------------------------------------------------------------------------
+  
+  Récuperons le fichier "turtle" sur notre mac :
+  
+  ----------------------------------------------------------------------------------------  
+  ➜ ~ scp thor@10.11.200.67:./turtle ./boot2root
+        ____                _______    _____
+       |  _ \              |__   __|  / ____|
+       | |_) | ___  _ __ _ __ | | ___| (___   ___  ___
+       |  _ < / _ \| '__| '_ \| |/ _ \\___ \ / _ \/ __|
+       | |_) | (_) | |  | | | | | (_) |___) |  __/ (__
+       |____/ \___/|_|  |_| |_|_|\___/_____/ \___|\___|
+
+                       Good luck & Have fun
+thor@10.11.200.67's password:
+turtle                                                                                    100%   31KB  23.6MB/s   00:00
+  ----------------------------------------------------------------------------------------
+
+Nous avons fait un script python qui transforme le fichier "turtle" en un executable python => result.py
+En lançant ce dernier, une fenetre graphique s'ouvre et on peut voir le mot "slash" se dessiner.
+A la fin du fichier "turtle" il y a une phrase "Can you digest the message? :)" qui fait reference au hash MD-5 ;) ce aui nous donne :
+zaz : 646da671ca01bb5d84dbb5fb2238dc8e
 
