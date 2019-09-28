@@ -126,4 +126,9 @@ Best regards.
  Voila, nous avons un accés à la machine :).
  
  
+ Apres quelques recherches, on a trouvé une faille assez connue car présente sur tous les noyaux linux depuis 2007 : Dirty COW (Copy-On-Write)
+ On profite de cet faille pour changer le fichier /etc/password et ainsi passer root en utilisant le script suivant :
+"https://www.exploit-db.com/exploits/40839".
+Voici une liste des multiples exploits existant pour cette faille: "https://github.com/dirtycow/dirtycow.github.io/wiki/PoCs"
  
+ TADAAAM !!! JE S'APPELLE ROOT
